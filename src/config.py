@@ -2,7 +2,7 @@ import numpy as np
 
 #Data
 
-DATAFILE_NAME = 'MP_Data' #Set your file's name here
+DATAFILE_NAME = 'Test' #Set your file's name here
 
 ACTIONS = np.array(['hello', 'thanks', 'iloveyou'])
 
