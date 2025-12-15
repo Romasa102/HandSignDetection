@@ -25,8 +25,9 @@ Due to strict version requirements for **TensorFlow** and **MediaPipe**, you mus
 
 **1. Clone the repository:**
 ```bash
-git clone <your-repo-url>
-cd <your-repo-name>
+git clone https://github.com/Romasa102/HandSignDetection.git
+
+cd HandSignDetection
 ```
 **2. Create and activate a virtual environment (Optional but recommended):**
 
