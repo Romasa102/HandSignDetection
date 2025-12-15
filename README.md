@@ -1,59 +1,95 @@
-# About the proejct
-This project create the real time sign recognition model. By usng LSTM, the model consider the sequence of the movement of the hand to guess the sign rather than taking a single frame and process the inference. This allows the model to recognize the gesture that involve hand movement rather than just the sign which is stationary.
 
-This project is a whole pipeline which allows the user to create the dataset, train the model and test the model. 
+# Real-Time Sign Language Recognition using LSTM
 
+![Python](https://img.shields.io/badge/Python-3.10-blue.svg)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)
+![MediaPipe](https://img.shields.io/badge/MediaPipe-Legacy-green.svg)
 
-# Setup
-## Library installation
-Due to the strict version requirement for tensorflow and mediapipe, make sure to use python 3.10 and download the library as it is in requirement.txt.
+## 📖 About the Project
+
+This project implements a real-time sign language recognition model. By utilizing **Long Short-Term Memory (LSTM)** networks, the model analyzes the *sequence* of hand movements rather than relying on a single static frame for inference. This allows the system to recognize dynamic gestures that involve movement, not just stationary hand signs.
+
+This repository contains an end-to-end pipeline that allows users to:
+1. **Create a custom dataset** using a webcam.
+2. **Train the LSTM model** on that data.
+3. **Test the model** with real-time prediction and visualization.
+
+---
+## ⚙️ Setup
+
+### Prerequisites & Installation
+Due to strict version requirements for **TensorFlow** and **MediaPipe**, you must use **Python 3.10**.
+
 > [!NOTE]
-> I would suggest to use the virtual environment in order to manage this specific environement. It could make such a mess.
+> **Highly Recommended:** Use a virtual environment (venv or conda) to manage dependencies. Mixing these specific library versions with your global Python installation can cause significant conflicts.
 
-Use the following command to install all the required library.
+**1. Clone the repository:**
+```bash
+git clone <your-repo-url>
+cd <your-repo-name>
 ```
+
+**2. Create and activate a virtual environment (Optional):**
+
+```bash
+# Windows
+python -m venv venv
+.\venv\Scripts\activate
+
+# Linux/MacOS
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**3. Install dependencies:**
+```bash
 pip install -r requirements.txt 
 ```
-## Configuration
-Configure the setting using config,py
-Each of the variable's function is as follows
+---
+## 🛠️ Configuration
+All settings are managed in config.py. Adjust the variables below to suit your specific use case.
 
-### Data creation configurartion
-- DATAFILE_NAME - Name of the dataset you will create
-- ACTIONS - List of possible actions detected in your model
-- NO_SEQUENCES - How many data do you want to have for each actions.
-- SEQUENCE_LENGTH - How long the video would be (frame count)
+### Data collection settings
+- DATAFILE_NAME - Name of the folder/dataset you will create.
+- ACTIONS - A list of actions (signs) for the model to detect (e.g., `['hello', 'thanks', 'iloveyou']`).
+- NO_SEQUENCES - The number of video sequences to record for each action.
+- SEQUENCE_LENGTH - The length of each video sequence (in frames).
 
-### Model training configuration
-- TRAINING_DATAFILE_NAME - Name of dataset that you will use to train the model
-- LSTM_ACTIVATION_FUNCTION - Activation function for LSTM
-- DENSE_ACTIVATION_FUNCTION - Activation function for Dense layers
-- L2NORM - L2 norm regularization term
-- DROPOUTRATE - Dropout rate
-- OPTIMIZER - Optimizer to use
-- EPOCHS - number of epochs
-- MODEL_SAVE_DIRECTORY - derectry to save your model
+### Model training settings
+- TRAINING_DATAFILE_NAME - The name of the dataset folder to use for training.
+- LSTM_ACTIVATION_FUNCTION - Activation function for the LSTM layers (e.g., `tanh`).
+- DENSE_ACTIVATION_FUNCTION - Activation function for the Dense layers (e.g., `relu`).
+- L2NORM - L2 regularization factor to prevent overfitting.
+- DROPOUTRATE - Dropout rate to prevent overfitting.
+- OPTIMIZER - The optimizer algorithm (e.g., `Adam`).
+- EPOCHS - Number of training iterations.
+- MODEL_SAVE_DIRECTORY - Directory where the trained `.h5` model will be saved.
 
-### Testing condiguration
-- MODEL_DIRECTORY - directory of the model to use
+### Testing Settings
+- MODEL_PATH - Path to the specific model file you wish to load for inference.
 
-# How to use
-## Create the dataset
-Follow notebooks/CreateDataSet.ipynb to create your own datasets. This code will turn on an application where you will record the video following the instruction.
+---
+## 🚀 How to use
+### Create the dataset
+Open and run `notebooks/CreateDataSet.ipynb`. This script launches an application that records video sequences via your webcam based on the instructions defined in `config.py`.
 
-This datasets creation takes 
-```
-NO_SEQUENCES*len(ACTIONS)*(2+ SEQUENCE_LENGTH/30) seconds
-```
-to complete. (Default setting with 3 action, 30 data per action, 30 frame would take 270 seconds (4.5min) to complete)
+Estimated Time to Complete: The total recording time is calculated as:
 
-## Train the model
-> [!IMPORTANT]
-> This step could take significant time when the GPU is not utilized. Make sure that you are using the computer with powerful GPU and make sure that pytorch recognize your GPU.
+$$ Time \approx \text{NOSEQUENCES} \times \text{len(ACTIONS)} \times (2 + \frac{\text{SEQUENCELENGTH}}{30}) \text{ seconds}$$
 
-Follow notebook/Training.ipynb.
+ Example: With 3 actions, 30 sequences each, and 30 frames per sequence, data collection will take approximately 270 seconds (4.5 minutes).
 
-## Test the model
-Run notebook/Test.ipynb and it will open the application that run the model in real-time.
+### Train the model
+Open and run `notebooks/Training.ipynb`.
 
-This application would show the bar chart which show the outptu of the model (percentage for each action) and if the model decide that it is clear that the sign is made, it will print out the action's name on the screen.
+>[!IMPORTANT] 
+>Training LSTM models can be computationally intensive. Ensure you are using a machine with a dedicated GPU and that your environment correctly recognizes your CUDA/GPU setup to speed up the process.
+
+### Test the model
+Open and run `notebooks/Test.ipynb`. This will launch the real-time inference window.
+
+Features:
+
+- Probability Bar Chart: Visualizes the model's confidence for each action.
+
+- Action Prediction: If the confidence threshold is met, the detected action name will be printed on the screen.

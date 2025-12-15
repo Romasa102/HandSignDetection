@@ -30,5 +30,5 @@ MODEL_SAVE_DIRECTORY = 'models'
 
 #Model
 
-MODEL_DIRECTORY = 'models/action.h5' #The model you would like to use for the test
+MODEL_PATH = 'models/action.h5' #The model you would like to use for the test
 
