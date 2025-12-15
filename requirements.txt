@@ -1,19 +1,12 @@
 absl-py==2.3.1
-appnope @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_46iquy4y0r/croot/appnope_1750774774351/work
-asttokens @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_11i8cnwuxs/croot/asttokens_1743630449718/work
 astunparse==1.6.3
 attrs==25.4.0
 cachetools==6.2.3
 certifi==2025.11.12
 cffi==2.0.0
 charset-normalizer==3.4.4
-comm @ file:///opt/miniconda3/conda-bld/comm_1763119153747/work
 contourpy==1.3.2
 cycler==0.12.1
-debugpy @ file:///opt/miniconda3/conda-bld/debugpy_1762421637624/work
-decorator @ file:///opt/miniconda3/conda-bld/decorator_1757341235559/work
-exceptiongroup @ file:///opt/miniconda3/conda-bld/exceptiongroup_1761560357548/work
-executing @ file:///opt/miniconda3/conda-bld/executing_1757061234733/work
 flatbuffers==25.9.23
 fonttools==4.61.1
 gast==0.7.0
@@ -23,66 +16,77 @@ google-pasta==0.2.0
 grpcio==1.76.0
 h5py==3.15.1
 idna==3.11
-ipykernel @ file:///opt/miniconda3/conda-bld/ipykernel_1762946072004/work
-ipython @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_2evnd74hdv/croot/ipython_1734548057210/work
 jax==0.4.34
 jaxlib==0.4.34
-jedi @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_38ctoinnl0/croot/jedi_1733987402850/work
 joblib==1.5.2
-jupyter_client @ file:///opt/miniconda3/conda-bld/jupyter_client_1762943080419/work
-jupyter_core @ file:///opt/miniconda3/conda-bld/jupyter_core_1764588285502/work
 keras==2.15.0
 kiwisolver==1.4.9
 libclang==18.1.1
 Markdown==3.10
 MarkupSafe==3.0.3
 matplotlib==3.10.8
-matplotlib-inline @ file:///opt/miniconda3/conda-bld/matplotlib-inline_1762779171547/work
 mediapipe==0.10.21
 ml-dtypes==0.2.0
-nest-asyncio @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_310vb5e2a0/croot/nest-asyncio_1708532678212/work
 numpy==1.26.4
 oauthlib==3.3.1
 opencv-contrib-python==4.11.0.86
-opt_einsum==3.4.0
-packaging @ file:///opt/miniconda3/conda-bld/packaging_1761049079158/work
-parso @ file:///opt/miniconda3/conda-bld/parso_1762781705608/work
-pexpect @ file:///opt/miniconda3/conda-bld/pexpect_1762535936197/work
+opt-einsum==3.4.0
 pillow==12.0.0
-platformdirs @ file:///opt/miniconda3/conda-bld/platformdirs_1762356633662/work
-prompt_toolkit @ file:///opt/miniconda3/conda-bld/prompt-toolkit_1761744860944/work
 protobuf==4.25.3
-psutil @ file:///opt/miniconda3/conda-bld/psutil_1761896322276/work
-ptyprocess @ file:///opt/miniconda3/conda-bld/ptyprocess_1762424170819/work/dist/ptyprocess-0.7.0-py2.py3-none-any.whl#sha256=3470be7f810474c8a2ecfcd6e02acc6aea8483ab595417fa4e336362a349933e
-pure_eval @ file:///opt/miniconda3/conda-bld/pure_eval_1757067086281/work
 pyasn1==0.6.1
-pyasn1_modules==0.4.2
+pyasn1-modules==0.4.2
 pycparser==2.23
-Pygments @ file:///opt/miniconda3/conda-bld/pygments_1762431566026/work
 pyparsing==3.2.5
-python-dateutil @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_66ud1l42_h/croot/python-dateutil_1716495741162/work
-pyzmq @ file:///opt/miniconda3/conda-bld/pyzmq_1762375617494/work
 requests==2.32.5
 requests-oauthlib==2.0.0
 rsa==4.9.1
 scikit-learn==1.7.2
 scipy==1.15.3
 sentencepiece==0.2.1
-six @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_03myqm7p6o/croot/six_1744271511946/work
 sounddevice==0.5.3
-stack_data @ file:///opt/miniconda3/conda-bld/stack_data_1757067065720/work
 tensorboard==2.15.2
 tensorboard-data-server==0.7.2
 tensorflow==2.15.0
 tensorflow-estimator==2.15.0
 tensorflow-io-gcs-filesystem==0.37.1
-tensorflow-macos==2.15.0
 termcolor==3.2.0
 threadpoolctl==3.6.0
-tornado @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_63s3osc0_1/croot/tornado_1748956943583/work
-traitlets @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_500m2_1wyk/croot/traitlets_1718227071952/work
-typing_extensions @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_dffmcwqo6o/croot/typing_extensions_1756281471323/work
 urllib3==2.6.2
-wcwidth @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_8el7txr34i/croot/wcwidth_1750352901095/work
 Werkzeug==3.1.4
 wrapt==1.14.2
+
+# Packages that had broken paths (Letting pip pick the version):
+appnope; sys_platform == 'darwin'
+asttokens
+comm
+debugpy
+decorator
+exceptiongroup
+executing
+ipykernel
+ipython
+jedi
+jupyter_client
+jupyter_core
+matplotlib-inline
+nest-asyncio
+packaging
+parso
+pexpect
+platformdirs
+prompt_toolkit
+psutil
+ptyprocess
+pure_eval
+Pygments
+python-dateutil
+pyzmq
+six
+stack_data
+tornado
+traitlets
+typing_extensions
+wcwidth
+
+# OS Specific (Only install if on Mac):
+tensorflow-macos==2.15.0; sys_platform == 'darwin'
