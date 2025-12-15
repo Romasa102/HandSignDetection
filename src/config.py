@@ -14,9 +14,15 @@ SEQUENCE_LENGTH = 30 #How long the video would be (frame count)
 
 TRAINING_DATAFILE_NAME = 'MP_Data' #Which dataset to use for training
 
-OPTIMIZER = 'Adam' #Optimizer to use
+LSTM_ACTIVATION_FUNCTION = 'tanh'
 
-L2NORM = '' #L2 norm regularization term
+DENSE_ACTIVATION_FUNCTION = 'relu'
+
+L2NORM = 0.001 #L2 norm regularization term
+
+DROPOUTRATE = 0.2 #dropout rate
+
+OPTIMIZER = 'Adam' #Optimizer to use
 
 EPOCHS = 2000 #Epoch count
 

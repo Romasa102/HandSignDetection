@@ -26,8 +26,11 @@ Each of the variable's function is as follows
 
 ### Model training configuration
 - TRAINING_DATAFILE_NAME - Name of dataset that you will use to train the model
+- LSTM_ACTIVATION_FUNCTION - Activation function for LSTM
+- DENSE_ACTIVATION_FUNCTION - Activation function for Dense layers
+- L2NORM - L2 norm regularization term
+- DROPOUTRATE - Dropout rate
 - OPTIMIZER - Optimizer to use
-- L2NORM - L2 normalization rate
 - EPOCHS - number of epochs
 - MODEL_SAVE_DIRECTORY - derectry to save your model
 
