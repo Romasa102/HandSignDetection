@@ -28,9 +28,11 @@ Due to strict version requirements for **TensorFlow** and **MediaPipe**, you mus
 git clone <your-repo-url>
 cd <your-repo-name>
 ```
+**2. Create and activate a virtual environment (Optional but recommended):**
 
-**2. Create and activate a virtual environment (Optional):**
+You can use either `venv` (built-in) or `conda`.
 
+**Option A: Using venv**
 ```bash
 # Windows
 python -m venv venv
@@ -39,6 +41,15 @@ python -m venv venv
 # Linux/MacOS
 python3 -m venv venv
 source venv/bin/activate
+```
+
+**Option B: Using conda**
+```bash
+# Create environment with Python 3.10
+conda create -n sign-lang-env python=3.10
+
+# Activate the environment
+conda activate sign-lang-env
 ```
 
 **3. Install dependencies:**
