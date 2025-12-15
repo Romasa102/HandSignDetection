@@ -26,10 +26,9 @@ models/*.h5
 
 # General Data/Model Folders
 # (It is standard to ignore the folders entirely to be safe)
-data/
+datasets/
 models/
-outputs/
-logs/
+Logs/
 
 # TensorFlow / Deep Learning specifics
 *.tf
