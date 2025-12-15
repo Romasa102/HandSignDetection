@@ -7,7 +7,7 @@
 
 ## 📖 About the Project
 
-This project implements a real-time sign language recognition model. By utilizing **Long Short-Term Memory (LSTM)** networks, the model analyzes the *sequence* of hand movements rather than relying on a single static frame for inference. This allows the system to recognize dynamic gestures that involve movement, not just stationary hand signs.
+This project implements a real-time gesture,hand-sign recognition model. By utilizing **Long Short-Term Memory (LSTM)** networks, the model analyzes the *sequence* of hand movements rather than relying on a single static frame for inference. This allows the system to recognize dynamic gestures that involve movement, not just stationary hand signs.
 
 This repository contains an end-to-end pipeline that allows users to:
 1. **Create a custom dataset** using a webcam.
