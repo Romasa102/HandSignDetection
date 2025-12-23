@@ -111,7 +111,7 @@ Open and run `notebooks/Training.ipynb`.
 >Training LSTM models can be computationally intensive. Ensure you are using a machine with a dedicated GPU and that your environment correctly recognizes your CUDA/GPU setup to speed up the process.
 
 ### Test the model
-Open and run `notebooks/Test.ipynb`. This will launch the real-time inference window.
+Open and run `notebooks/Test.ipynb`. This will launch the real-time inference window. Press `q` to stop the application.
 
 Features:
 
@@ -120,4 +120,4 @@ Features:
 - Action Prediction: If the confidence threshold is met, the detected action name will be printed on the screen.
 
 ### Art feature (Prototype)
-Open and run `notebooks/Art.ipynb`. This will launch the real-time inference window which trace the skelton and draw the line based on the movement.
+Open and run `notebooks/Art.ipynb`. This will launch the real-time inference window which trace the skelton and draw the line based on the movement. Press `q` to stop the application.
