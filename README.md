@@ -1,5 +1,5 @@
 
-# Real-Time Sign Language Recognition using LSTM
+# Correctivity (Motion Analysis Prototype)
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue.svg)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)
@@ -7,12 +7,25 @@
 
 ## 📖 About the Project
 
-This project implements a real-time gesture,hand-sign recognition model. By utilizing **Long Short-Term Memory (LSTM)** networks, the model analyzes the *sequence* of hand movements rather than relying on a single static frame for inference. This allows the system to recognize dynamic gestures that involve movement, not just stationary hand signs.
+
+This project implements a real-time motion analysis and gesture recognition model. Currently functioning as the core prototype for Correctivity, this repository demonstrates the ability to capture, analyze, and classify dynamic human movement in real-time.
+
+Correctivity Vision: The ultimate goal of Correctivity is to bridge physical fitness and creative expression. Instead of simple classification, the future application will use this motion data to:
+
+- Analyze Form: Assess whether a user's movement matches a "target" professional motion pattern.
+
+- Generate Art: Transform physical exercises into unique digital artwork.
+
+Current Implementation: By utilizing Long Short-Term Memory (LSTM) networks, the current model analyzes the sequence of movements (demonstrated here via Hand Sign Recognition) rather than relying on a single static frame. This establishes the technical foundation for the complex motion tracking required for Correctivity.
 
 This repository contains an end-to-end pipeline that allows users to:
 1. **Create a custom dataset** using a webcam.
 2. **Train the LSTM model** on that data.
 3. **Test the model** with real-time prediction and visualization.
+
+## 🔮 Future Roadmap Based on the project goals for Correctivity: 
+- Motion Correction Engine: Shift from simple classification (naming a gesture) to comparison (scoring a movement against a "Golden Standard" using skeleton tracking).
+- Generative Art Integration: Map kinematic data (velocity, trajectory) to visual outputs, allowing users to "draw" with their exercises.
 
 ---
 ## ⚙️ Setup
