@@ -118,3 +118,6 @@ Features:
 - Probability Bar Chart: Visualizes the model's confidence for each action.
 
 - Action Prediction: If the confidence threshold is met, the detected action name will be printed on the screen.
+
+### Art feature (Prototype)
+Open and run `notebooks/Art.ipynb`. This will launch the real-time inference window which trace the skelton and draw the line based on the movement.
