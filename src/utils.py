@@ -43,6 +43,29 @@ def extract_keypoints(results):
     rh = np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(21*3)
     return np.concatenate([pose, face, lh, rh])         
 
+def extract_hand_keypoints(results, hand='right'):
+    """Trimmed extractor for Correctivity training.
+
+    Returns a 63-element array (21 landmarks × [x, y, z]) for the specified
+    hand only. Use this instead of extract_keypoints() when training the
+    Correctivity LSTM (input_shape=(30, 63)).
+
+    Args:
+        results: MediaPipe Holistic results object.
+        hand: 'right' or 'left'.
+
+    Returns:
+        np.ndarray of shape (63,).
+    """
+    if hand == 'right':
+        src = results.right_hand_landmarks
+    else:
+        src = results.left_hand_landmarks
+    if src:
+        return np.array([[res.x, res.y, res.z] for res in src.landmark]).flatten()
+    return np.zeros(21 * 3)
+
+
 def prob_viz(res, actions, input_frame, colors):
     output_frame = input_frame.copy()
     for num, prob in enumerate(res):

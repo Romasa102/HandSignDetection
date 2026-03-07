@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+.env.local
+
+# Keep placeholder files but ignore large binary assets committed separately
+public/mediapipe/*.wasm
+public/mediapipe/*.tflite
+public/mediapipe/*.task
