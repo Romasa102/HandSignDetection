@@ -335,77 +335,77 @@ Exit criteria: Classifier outputs >0.7 confidence for the target movement when p
 #### M0 Detailed Todo List
 
 **1. Project scaffolding**
-- [ ] Initialise project with `npm create vite@latest correctivity -- --template react-ts`
-- [ ] Install dependencies: `@mediapipe/tasks-vision`, `@tensorflow/tfjs`, `@tensorflow/tfjs-backend-webgl`
-- [ ] Configure `vite.config.ts` to set `optimizeDeps.exclude: ['@mediapipe/tasks-vision']` (prevents Vite from pre-bundling the WASM module)
-- [ ] Add `public/` to `.gitignore` exceptions so model files are tracked if committed; add a `.gitkeep` in `public/models/` and `public/videos/`
-- [ ] Confirm `npm run dev` serves the app at `localhost:5173` with no console errors
-- [ ] Set up path aliases in `tsconfig.json` and `vite.config.ts`: `@/` → `src/`
+- [x] Initialise project with `npm create vite@latest correctivity -- --template react-ts`
+- [x] Install dependencies: `@mediapipe/tasks-vision`, `@tensorflow/tfjs`, `@tensorflow/tfjs-backend-webgl`
+- [x] Configure `vite.config.ts` to set `optimizeDeps.exclude: ['@mediapipe/tasks-vision']` (prevents Vite from pre-bundling the WASM module)
+- [x] Add `public/` to `.gitignore` exceptions so model files are tracked if committed; add a `.gitkeep` in `public/models/` and `public/videos/`
+- [x] Confirm `npm run dev` serves the app at `localhost:5173` with no console errors
+- [x] Set up path aliases in `tsconfig.json` and `vite.config.ts`: `@/` → `src/`
 
 **2. Camera access**
-- [ ] Create `useCamera` hook (`src/hooks/useCamera.ts`) that calls `navigator.mediaDevices.getUserMedia({ video: true })`
-- [ ] Attach the media stream to a `<video>` element via a `ref` (`video.srcObject = stream`)
-- [ ] Handle permission denied: surface a visible error message ("Camera access is required") — do not crash
-- [ ] Handle no camera found: separate error state with distinct message
-- [ ] Clean up stream tracks on component unmount (`stream.getTracks().forEach(t => t.stop())`)
-- [ ] Confirm video renders live in the browser at this point
+- [x] Create `useCamera` hook (`src/hooks/useCamera.ts`) that calls `navigator.mediaDevices.getUserMedia({ video: true })`
+- [x] Attach the media stream to a `<video>` element via a `ref` (`video.srcObject = stream`)
+- [x] Handle permission denied: surface a visible error message ("Camera access is required") — do not crash
+- [x] Handle no camera found: separate error state with distinct message
+- [x] Clean up stream tracks on component unmount (`stream.getTracks().forEach(t => t.stop())`)
+- [x] Confirm video renders live in the browser at this point
 
 **3. MediaPipe HandLandmarker initialisation**
-- [ ] Create `useHandLandmarker` hook (`src/hooks/useHandLandmarker.ts`)
-- [ ] Download the HandLandmarker WASM bundle and model asset (`hand_landmarker.task`) and place in `public/mediapipe/`
-- [ ] Initialise `HandLandmarker` with `runningMode: 'VIDEO'`, `numHands: 1`, loading from the local `public/mediapipe/` path (no CDN calls at runtime)
-- [ ] Expose `isReady: boolean` while the model asset is loading; render a loading state in the UI until ready
-- [ ] Run `handLandmarker.detectForVideo(videoElement, timestamp)` inside a `requestAnimationFrame` loop
-- [ ] Return `landmarks: NormalizedLandmark[] | null` (null when no hand detected) from the hook
-- [ ] Confirm landmarks log to the console when a hand is in frame
+- [x] Create `useHandLandmarker` hook (`src/hooks/useHandLandmarker.ts`)
+- [x] Download the HandLandmarker WASM bundle and model asset (`hand_landmarker.task`) and place in `public/mediapipe/`
+- [x] Initialise `HandLandmarker` with `runningMode: 'VIDEO'`, `numHands: 1`, loading from the local `public/mediapipe/` path (no CDN calls at runtime)
+- [x] Expose `isReady: boolean` while the model asset is loading; render a loading state in the UI until ready
+- [x] Run `handLandmarker.detectForVideo(videoElement, timestamp)` inside a `requestAnimationFrame` loop
+- [x] Return `landmarks: NormalizedLandmark[] | null` (null when no hand detected) from the hook
+- [x] Confirm landmarks log to the console when a hand is in frame
 
 **4. Landmark overlay on canvas**
-- [ ] Add a `<canvas>` element sized to match the video element dimensions
-- [ ] On each frame where landmarks are non-null: draw a circle (radius 4px) at each of the 21 landmark positions, scaled by canvas width/height
-- [ ] Connect landmark points with lines to form the hand skeleton (use MediaPipe's standard connection list: `HAND_CONNECTIONS`)
-- [ ] Mirror the canvas display horizontally (`ctx.scale(-1, 1)` or CSS `transform: scaleX(-1)`) so it feels like a mirror
-- [ ] Confirm the skeleton tracks the hand smoothly with no visible lag at 30fps
+- [x] Add a `<canvas>` element sized to match the video element dimensions
+- [x] On each frame where landmarks are non-null: draw a circle (radius 4px) at each of the 21 landmark positions, scaled by canvas width/height
+- [x] Connect landmark points with lines to form the hand skeleton (use MediaPipe's standard connection list: `HAND_CONNECTIONS`)
+- [x] Mirror the canvas display horizontally (`ctx.scale(-1, 1)` or CSS `transform: scaleX(-1)`) so it feels like a mirror
+- [x] Confirm the skeleton tracks the hand smoothly with no visible lag at 30fps
 
 **5. Ring buffer**
-- [ ] Implement `RingBuffer<T>` class in `src/utils/ringBuffer.ts`:
+- [x] Implement `RingBuffer<T>` class in `src/utils/ringBuffer.ts`:
   - Constructor takes `capacity: number`
   - `push(item: T): void`
   - `toArray(): T[]` — returns items in chronological order
   - `isFull(): boolean`
   - `clear(): void`
-- [ ] Instantiate a `RingBuffer<NormalizedLandmark[]>` of capacity 30 inside `useHandLandmarker`
-- [ ] Push the current frame's landmarks on every `rAF` tick (push a zero-filled frame if no hand detected, to keep the buffer advancing)
-- [ ] Unit test `toArray()` wrap-around ordering and `isFull()` using Vitest (`npm run test`)
+- [x] Instantiate a `RingBuffer<NormalizedLandmark[]>` of capacity 30 inside `useHandLandmarker`
+- [x] Push the current frame's landmarks on every `rAF` tick (push a zero-filled frame if no hand detected, to keep the buffer advancing)
+- [x] Unit test `toArray()` wrap-around ordering and `isFull()` using Vitest (`npm run test`)
 
 **6. Training a single-movement LSTM (Python — reuse existing pipeline)**
-- [ ] Choose one movement for M0/M1 testing (e.g. `finger_extension_right`)
-- [ ] Open `notebooks/CreateDataSet.ipynb`; set `ACTIONS = ['finger_extension_right', 'other']` and `SEQUENCE_LENGTH = 30`
-- [ ] Record ~500 sequences per class using the webcam (physiotherapist or stand-in performer)
-- [ ] Open `notebooks/Training.ipynb`; update `input_shape` to `(30, 63)` (hand landmarks only — right hand: 21 × 3)
-- [ ] Add a trimmed extractor alongside `extract_keypoints()` in `src/utils.py` that returns only the 63 right-hand floats (or left-hand); use this for the Correctivity training run
-- [ ] Train LSTM; confirm validation accuracy > 90% before proceeding
-- [ ] Save model to `models/finger_extension_right.h5`
+- [x] Choose one movement for M0/M1 testing (e.g. `finger_extension_right`)
+- [x] Open `notebooks/CreateDataSet.ipynb`; set `ACTIONS = ['finger_extension_right', 'other']` and `SEQUENCE_LENGTH = 30`
+- [x] Record ~500 sequences per class using the webcam (physiotherapist or stand-in performer)
+- [x] Open `notebooks/Training.ipynb`; update `input_shape` to `(30, 63)` (hand landmarks only — right hand: 21 × 3)
+- [x] Add a trimmed extractor alongside `extract_keypoints()` in `src/utils.py` that returns only the 63 right-hand floats (or left-hand); use this for the Correctivity training run
+- [x] Train LSTM; confirm validation accuracy > 90% before proceeding
+- [x] Save model to `models/finger_extension_right.h5`
 
 **7. TF.js model conversion**
-- [ ] Install converter: `pip install tensorflowjs`
-- [ ] Run conversion:
+- [x] Install converter: `pip install tensorflowjs`
+- [x] Run conversion:
   ```bash
   tensorflowjs_converter --input_format=keras \
     models/finger_extension_right.h5 \
     correctivity-app/public/models/finger_extension_right/
   ```
-- [ ] Confirm `model.json` and at least one `.bin` shard are present in the output directory
-- [ ] Verify file sizes are reasonable (expect < 5MB for a 3-layer LSTM of this size)
+- [x] Confirm `model.json` and at least one `.bin` shard are present in the output directory
+- [x] Verify file sizes are reasonable (expect < 5MB for a 3-layer LSTM of this size)
 
 **8. TF.js inference in-browser**
-- [ ] Install `@tensorflow/tfjs` and `@tensorflow/tfjs-backend-webgl` in the React project
-- [ ] Call `tf.setBackend('webgl')` on app initialisation; fall back to `'cpu'` if WebGL is unavailable
-- [ ] Load the model: `tf.loadLayersModel('/models/finger_extension_right/model.json')` on app mount
-- [ ] When ring buffer `isFull()`: convert `buffer.toArray()` to a `tf.Tensor` of shape `[1, 30, 63]`
-- [ ] Run `model.predict(tensor)` and extract the softmax output as a plain JS array
-- [ ] Log confidence for `finger_extension_right` (index 0) to the console on every inference
-- [ ] Dispose input and output tensors immediately after reading values (`tensor.dispose()`)
-- [ ] Confirm inference runs without "tensor not disposed" warnings in the console
+- [x] Install `@tensorflow/tfjs` and `@tensorflow/tfjs-backend-webgl` in the React project
+- [x] Call `tf.setBackend('webgl')` on app initialisation; fall back to `'cpu'` if WebGL is unavailable
+- [x] Load the model: `tf.loadLayersModel('/models/finger_extension_right/model.json')` on app mount
+- [x] When ring buffer `isFull()`: convert `buffer.toArray()` to a `tf.Tensor` of shape `[1, 30, 63]`
+- [x] Run `model.predict(tensor)` and extract the softmax output as a plain JS array
+- [x] Log confidence for `finger_extension_right` (index 0) to the console on every inference
+- [x] Dispose input and output tensors immediately after reading values (`tensor.dispose()`)
+- [x] Confirm inference runs without "tensor not disposed" warnings in the console
 
 **9. Performance check**
 - [ ] Open Chrome DevTools → Performance tab; record 10 seconds of live inference

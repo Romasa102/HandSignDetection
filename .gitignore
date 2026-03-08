@@ -30,6 +30,10 @@ datasets/
 models/
 Logs/
 
+# Allow TF.js model files used by the web app
+!correctivity-app/public/models/
+!correctivity-app/public/models/**
+
 # TensorFlow / Deep Learning specifics
 *.tf
 *.tflite
