@@ -13,6 +13,9 @@ export default defineConfig({
     // Prevent Vite pre-bundling the WASM module — it must load as-is
     exclude: ['@mediapipe/tasks-vision'],
   },
+  build: {
+    sourcemap: false,
+  },
   server: {
     headers: {
       // Required for SharedArrayBuffer (used by some WASM runtimes)

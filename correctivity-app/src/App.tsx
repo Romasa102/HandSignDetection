@@ -32,7 +32,7 @@ export default function App() {
     stopDetection,
   } = useHandLandmarker(motionThreshold)
 
-  const { isReady: classifierReady, confidence, runInference } =
+  const { isReady: classifierReady, error: classifierError, confidence, runInference } =
     useMovementClassifier(MOVEMENT.modelUrl)
 
   const inferenceScheduledRef = useRef(false)
@@ -112,6 +112,38 @@ export default function App() {
           />
         )}
 
+        {/* Classification result indicator */}
+        {cameraReady && (
+          <div style={styles.classifierPanel}>
+            <div
+              style={{
+                ...styles.detectedBadge,
+                background: classifierError ? '#dc2626' : !classifierReady ? '#7c3aed' : confidence >= confidenceThreshold ? '#22c55e' : '#374151',
+              }}
+            >
+              {classifierError
+                ? `Model error: ${classifierError}`
+                : !classifierReady
+                  ? 'Loading classifier…'
+                  : confidence >= confidenceThreshold
+                    ? '✓ MOVEMENT DETECTED'
+                    : 'Waiting for movement…'}
+            </div>
+            <div style={styles.confidenceBarTrack}>
+              <div
+                style={{
+                  ...styles.confidenceBarFill,
+                  width: `${Math.round(confidence * 100)}%`,
+                  background: confidence >= confidenceThreshold ? '#22c55e' : '#60a5fa',
+                }}
+              />
+            </div>
+            <div style={styles.confidenceLabel}>
+              Confidence: {Math.round(confidence * 100)}%
+            </div>
+          </div>
+        )}
+
         {/* Hand not detected banner */}
         {!handPresent && cameraReady && (
           <div style={styles.handBanner}>Move your hand into the box!</div>
@@ -162,5 +194,39 @@ const styles = {
     borderRadius: 24,
     fontSize: 16,
     whiteSpace: 'nowrap' as const,
+  },
+  classifierPanel: {
+    position: 'absolute' as const,
+    bottom: 16,
+    left: 16,
+    right: 16,
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: 6,
+  },
+  detectedBadge: {
+    color: '#fff',
+    fontWeight: 700,
+    fontSize: 18,
+    textAlign: 'center' as const,
+    padding: '8px 0',
+    borderRadius: 8,
+    transition: 'background 0.2s',
+  },
+  confidenceBarTrack: {
+    height: 12,
+    background: '#1f2937',
+    borderRadius: 6,
+    overflow: 'hidden' as const,
+  },
+  confidenceBarFill: {
+    height: '100%',
+    borderRadius: 6,
+    transition: 'width 0.1s, background 0.2s',
+  },
+  confidenceLabel: {
+    color: '#d1d5db',
+    fontSize: 13,
+    textAlign: 'center' as const,
   },
 } as const

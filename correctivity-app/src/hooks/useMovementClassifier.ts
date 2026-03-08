@@ -10,6 +10,7 @@ const FEATURES_PER_FRAME = 63 // 21 landmarks × 3
 
 interface UseMovementClassifierReturn {
   isReady: boolean
+  error: string | null
   confidence: number
   /** Run inference against the current buffer contents. No-op until ready and buffer is full. */
   runInference: (
@@ -21,6 +22,7 @@ interface UseMovementClassifierReturn {
 
 export function useMovementClassifier(modelUrl: string): UseMovementClassifierReturn {
   const [isReady, setIsReady] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [confidence, setConfidence] = useState(0)
   const modelRef = useRef<tf.LayersModel | null>(null)
 
@@ -38,13 +40,17 @@ export function useMovementClassifier(modelUrl: string): UseMovementClassifierRe
       await tf.ready()
 
       try {
+        console.log('[useMovementClassifier] loading model from', modelUrl)
         const model = await tf.loadLayersModel(modelUrl)
+        console.log('[useMovementClassifier] model loaded OK')
         if (!cancelled) {
           modelRef.current = model
           setIsReady(true)
         }
       } catch (err) {
-        console.error('[useMovementClassifier] model load failed:', err)
+        const msg = err instanceof Error ? err.message : String(err)
+        console.error('[useMovementClassifier] model load failed:', msg)
+        if (!cancelled) setError(msg)
       }
     }
 
@@ -101,5 +107,5 @@ export function useMovementClassifier(modelUrl: string): UseMovementClassifierRe
     [],
   )
 
-  return { isReady, confidence, runInference }
+  return { isReady, error, confidence, runInference }
 }
