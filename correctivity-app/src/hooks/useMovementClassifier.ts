@@ -12,12 +12,12 @@ interface UseMovementClassifierReturn {
   isReady: boolean
   error: string | null
   confidence: number
-  /** Run inference against the current buffer contents. No-op until ready and buffer is full. */
+  /** Run inference against the current buffer contents. Returns confidence for this frame. */
   runInference: (
     buffer: RingBuffer<NormalizedLandmark[]>,
     motionEnergy: number,
     motionEnergyThreshold: number,
-  ) => void
+  ) => number
 }
 
 export function useMovementClassifier(modelUrl: string): UseMovementClassifierReturn {
@@ -72,12 +72,6 @@ export function useMovementClassifier(modelUrl: string): UseMovementClassifierRe
       const model = modelRef.current
       if (!model || !buffer.isFull()) return
 
-      // Motion energy gate — skip when hand is still
-      if (motionEnergy < motionEnergyThreshold) {
-        setConfidence(0)
-        return
-      }
-
       // Build input tensor [1, 30, 63]
       const frames = buffer.toArray()
       const flat = new Float32Array(SEQUENCE_LENGTH * FEATURES_PER_FRAME)
@@ -89,11 +83,11 @@ export function useMovementClassifier(modelUrl: string): UseMovementClassifierRe
       const inputTensor = tf.tensor3d(flat, [1, SEQUENCE_LENGTH, FEATURES_PER_FRAME])
 
       let outputTensor: tf.Tensor | null = null
+      let conf = 0
       try {
         outputTensor = model.predict(inputTensor) as tf.Tensor
         const probs = outputTensor.dataSync()
-        // Index 0 is the target movement class by convention
-        const conf = probs[0]
+        conf = probs[0]
         setConfidence(conf)
 
         if (import.meta.env.DEV) {
@@ -103,6 +97,7 @@ export function useMovementClassifier(modelUrl: string): UseMovementClassifierRe
         inputTensor.dispose()
         outputTensor?.dispose()
       }
+      return conf
     },
     [],
   )

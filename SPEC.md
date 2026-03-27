@@ -435,68 +435,65 @@ Exit criteria: 10 reps detected reliably in a 5-run test with <1 false positive 
 #### M1 Detailed Todo List
 
 **1. Motion energy gate**
-- [ ] Define motion energy as mean Euclidean distance of each landmark from its position in the previous frame (averaged across all 21 landmarks)
-- [ ] Implement `computeMotionEnergy(prevFrame, currFrame): number` as a pure utility function in `src/utils/motion.ts`
-- [ ] Add `motionEnergyThreshold` to `RepConfig` (start with a hand-tuned default, e.g. `0.005` in normalized coords)
-- [ ] Gate: if `motionEnergy < threshold` set classifier output to 0 without calling TF.js (saves inference cost)
-- [ ] Expose threshold as a dev-mode slider in the debug overlay for manual tuning
+- [x] Define motion energy as mean Euclidean distance of each landmark from its position in the previous frame (averaged across all 21 landmarks)
+- [x] Implement `computeMotionEnergy(prevFrame, currFrame): number` as a pure utility function in `src/utils/motion.ts`
+- [x] Add `motionEnergyThreshold` to `RepConfig` (start with a hand-tuned default, e.g. `0.005` in normalized coords)
+- [x] Gate: if `motionEnergy < threshold` set classifier output to 0 without calling TF.js (saves inference cost) — note: gate removed from inference after tuning; model is a pose detector, gate caused false negatives
+- [x] Expose threshold as a dev-mode slider in the debug overlay for manual tuning
 
 **2. Ring buffer**
-- [ ] Implement a fixed-length ring buffer class/hook (`src/utils/ringBuffer.ts`) that stores the last N landmark frames
-- [ ] Buffer length configurable (default 30 frames to match LSTM input shape)
-- [ ] Expose `isFull(): boolean` — classifier must not run until buffer has 30 frames
-- [ ] Implement `toArray(): Float32Array` that returns frames in chronological order, flattened to shape `(30, 63)`
-- [ ] Unit test: verify `toArray()` order is correct after buffer wraps around
+- [x] Implement a fixed-length ring buffer class/hook (`src/utils/ringBuffer.ts`) that stores the last N landmark frames
+- [x] Buffer length configurable (default 30 frames to match LSTM input shape)
+- [x] Expose `isFull(): boolean` — classifier must not run until buffer has 30 frames
+- [x] Implement `toArray(): Float32Array` that returns frames in chronological order, flattened to shape `(30, 63)`
+- [x] Unit test: verify `toArray()` order is correct after buffer wraps around
 
 **3. TF.js classifier hook (`useMovementClassifier`)**
-- [ ] Load TF.js model from `movement.modelUrl` on hook mount using `tf.loadLayersModel()`
-- [ ] Handle model load failure: log error and surface a recoverable error state (do not crash)
-- [ ] On each frame (after ring buffer is full and motion gate passes): run `model.predict()` with the 30-frame window
-- [ ] Parse softmax output: extract confidence for the `target_movement` class (index 0 by convention)
-- [ ] Return `{ confidence: number, isReady: boolean }` from hook
-- [ ] Dispose tensors after each inference to prevent memory leak (`tensor.dispose()`)
+- [x] Load TF.js model from `movement.modelUrl` on hook mount using `tf.loadLayersModel()`
+- [x] Handle model load failure: log error and surface a recoverable error state (do not crash)
+- [x] On each frame (after ring buffer is full): run `model.predict()` with the 30-frame window
+- [x] Parse softmax output: extract confidence for the `target_movement` class (index 0 by convention)
+- [x] Return `{ confidence: number, isReady: boolean }` from hook
+- [x] Dispose tensors after each inference to prevent memory leak (`tensor.dispose()`)
 - [ ] Verify inference runs at ≥ 20fps on a mid-range laptop (Chrome DevTools Performance tab)
 
 **4. Rep state machine (`useRepStateMachine`)**
-- [ ] Define `RepState = 'IDLE' | 'ACTIVE' | 'PEAK' | 'RETURNING'` in `src/types/index.ts`
-- [ ] Implement transitions:
-  - `IDLE → ACTIVE`: `motionEnergy > threshold` AND `confidence > confidenceThreshold` (default 0.7)
-  - `ACTIVE → PEAK`: `confidence` sustained above threshold for `sustainFrames` consecutive frames AND motion energy at local maximum (i.e. starts decreasing)
-  - `PEAK → RETURNING`: motion direction reverses (motion energy drops below `peakMotionEnergy * 0.5`)
-  - `RETURNING → IDLE`: mean landmark position within `returnProximity` of the position recorded at IDLE exit → increment `repCount`
-- [ ] Capture start-position snapshot of landmarks when leaving IDLE (used for `returnProximity` check)
-- [ ] Capture peak motion energy when entering PEAK (used for PEAK → RETURNING threshold)
-- [ ] Prevent re-entering ACTIVE from RETURNING (must fully return to IDLE first — avoids double-counting)
-- [ ] Hook returns `{ state: RepState, repCount: number, resetReps: () => void }`
-- [ ] All config values (`sustainFrames`, `confidenceThreshold`, `returnProximity`, etc.) sourced from `movement.repStateMachineConfig`
+- [x] Define `RepState = 'IDLE' | 'ACTIVE' | 'PEAK' | 'RETURNING'` in `src/types/index.ts`
+- [x] Implement transitions (adapted for pose detector model):
+  - `IDLE → ACTIVE`: `confidence >= confidenceThreshold`
+  - `ACTIVE → PEAK`: confidence sustained for `sustainFrames` consecutive frames
+  - `PEAK → RETURNING`: confidence drops below threshold (pose exited)
+  - `RETURNING → IDLE`: confidence stays low for cooldown frames → increment `repCount`
+- [x] Prevent double-counting: re-entering PEAK from RETURNING resets cooldown
+- [x] Hook returns `{ state: RepState, repCount: number, resetReps: () => void }`
+- [x] All config values sourced from `movement.repStateMachineConfig`
 
 **5. Hand-loss detection**
-- [ ] Track timestamp of last frame where MediaPipe returned ≥ 1 landmark
-- [ ] If elapsed time since last detected frame > 1000ms: set `handPresent = false`
-- [ ] When `handPresent` is false: freeze rep state machine (do not process new frames through classifier or state machine)
-- [ ] When landmarks are detected again: set `handPresent = true`, resume state machine from its current state (do not reset rep count)
-- [ ] Expose `handPresent: boolean` from the hook for the UI to show/hide the "Move your hand into the box!" banner
+- [x] Track timestamp of last frame where MediaPipe returned ≥ 1 landmark
+- [x] If elapsed time since last detected frame > 1000ms: set `handPresent = false`
+- [x] When `handPresent` is false: freeze rep state machine
+- [x] When landmarks are detected again: set `handPresent = true`, resume from current state
+- [x] Expose `handPresent: boolean` for the UI banner
 
 **6. Wiring (top-level session component)**
-- [ ] Connect `useHandLandmarker` → ring buffer → motion gate → `useMovementClassifier` → `useRepStateMachine` in the correct data flow order
-- [ ] Ensure per-frame processing runs inside `requestAnimationFrame` loop (not `setInterval`)
-- [ ] Rep count displayed live in the UI (top-right, large text)
-- [ ] "Move your hand into the box!" banner conditionally rendered based on `handPresent`
-- [ ] At `repCount === 10`: call `onSessionComplete()` callback and stop the animation loop
+- [x] Connect `useHandLandmarker` → ring buffer → `useMovementClassifier` → `useRepStateMachine`
+- [x] Per-frame processing runs inside `requestAnimationFrame` loop
+- [x] Rep count displayed live in the UI (top-right, large text)
+- [x] "Move your hand into the box!" banner conditionally rendered based on `handPresent`
+- [x] At `repCount === 10`: session complete screen shown, stop animation loop
 
 **7. Debug overlay (dev only)**
-- [ ] Render current `RepState` as text overlay on canvas (hidden in production via `import.meta.env.DEV`)
-- [ ] Show current `confidence` value (2 decimal places)
-- [ ] Show current `motionEnergy` value (4 decimal places)
-- [ ] Show `handPresent` status
-- [ ] Motion energy threshold slider (range 0–0.05, step 0.001) that writes back to a dev config store
-- [ ] Confidence threshold slider (range 0.5–0.99, step 0.01)
+- [x] Render current `RepState` as text overlay (hidden in production)
+- [x] Show current `confidence` value (2 decimal places)
+- [x] Show current `motionEnergy` value (4 decimal places)
+- [x] Show `handPresent` status
+- [x] Motion energy threshold slider
+- [x] Confidence threshold slider
 
 **8. Testing & tuning**
 - [ ] Run 5 consecutive sets of 10 reps of the target movement; record rep counts
 - [ ] Run 5 "false positive" tests: hold hand still, move hand in non-target ways; verify rep count stays at 0
-- [ ] Tune `motionEnergyThreshold`, `sustainFrames`, and `returnProximity` until exit criteria are met (<1 false positive per run)
-- [ ] Test hand-loss recovery: remove hand mid-session, reintroduce; verify rep count is preserved and session continues
+- [ ] Test hand-loss recovery: remove hand mid-session, reintroduce; verify rep count is preserved
 - [ ] Record final tuned config values in `src/data/movements.ts` for the test movement
 
 ---

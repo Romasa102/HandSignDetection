@@ -12,8 +12,8 @@ const FINGER_EXTENSION_RIGHT: Movement = {
   repStateMachineConfig: {
     motionEnergyThreshold: 0.005,
     confidenceThreshold: 0.7,
-    sustainFrames: 6,
-    returnProximity: 0.04,
+    sustainFrames: 4,
+    returnProximity: 0.06,
   },
   artPalette: ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff'],
 }

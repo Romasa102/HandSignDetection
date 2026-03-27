@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useCamera } from '@/hooks/useCamera'
 import { useHandLandmarker } from '@/hooks/useHandLandmarker'
 import { useMovementClassifier } from '@/hooks/useMovementClassifier'
+import { useRepStateMachine } from '@/hooks/useRepStateMachine'
 import { LandmarkOverlay } from '@/components/LandmarkOverlay'
 import { DebugOverlay } from '@/components/DebugOverlay'
 import { MOVEMENTS } from '@/data/movements'
@@ -35,7 +36,16 @@ export default function App() {
   const { isReady: classifierReady, error: classifierError, confidence, runInference } =
     useMovementClassifier(MOVEMENT.modelUrl)
 
+  const { state: repState, repCount, resetReps, processFrame } =
+    useRepStateMachine(MOVEMENT.repStateMachineConfig)
+
+  const [sessionDone, setSessionDone] = useState(false)
+
   const inferenceScheduledRef = useRef(false)
+
+  const onSessionComplete = useCallback(() => {
+    setSessionDone(true)
+  }, [])
 
   // Start detection once both camera and landmarker are ready
   useEffect(() => {
@@ -44,15 +54,24 @@ export default function App() {
     return () => stopDetection()
   }, [cameraReady, landmarkerReady, videoRef, startDetection, stopDetection])
 
-  // Run classifier on every new landmarks frame
+  // Run classifier + state machine on every new landmarks frame
   useEffect(() => {
-    if (!classifierReady || inferenceScheduledRef.current) return
+    if (!classifierReady || sessionDone || inferenceScheduledRef.current) return
     inferenceScheduledRef.current = true
     requestAnimationFrame(() => {
-      runInference(landmarkBuffer, motionEnergy, motionThreshold)
+      const liveConfidence = runInference(landmarkBuffer, motionEnergy, motionThreshold)
+      if (landmarks && handPresent) {
+        processFrame(landmarks, motionEnergy, liveConfidence)
+      }
       inferenceScheduledRef.current = false
     })
-  }, [landmarks, classifierReady, landmarkBuffer, motionEnergy, motionThreshold, runInference])
+  }, [landmarks, classifierReady, sessionDone, landmarkBuffer, motionEnergy, motionThreshold,
+      runInference, handPresent, confidence, processFrame])
+
+  // Trigger session complete at 10 reps
+  useEffect(() => {
+    if (repCount >= 10) onSessionComplete()
+  }, [repCount, onSessionComplete])
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -72,6 +91,20 @@ export default function App() {
 
   const isLoading = !cameraReady || !landmarkerReady
 
+  if (sessionDone) {
+    return (
+      <div style={styles.root}>
+        <div style={styles.sessionDone}>
+          <div style={styles.sessionDoneTitle}>Session Complete!</div>
+          <div style={styles.sessionDoneReps}>10 / 10 reps</div>
+          <button style={styles.resetButton} onClick={() => { resetReps(); setSessionDone(false) }}>
+            Go Again
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div style={styles.root}>
       {isLoading && (
@@ -81,6 +114,11 @@ export default function App() {
       )}
 
       <div style={{ position: 'relative', width: VIDEO_WIDTH, height: VIDEO_HEIGHT }}>
+        {/* Rep counter — top right */}
+        <div style={styles.repCounter}>
+          {repCount} / 10
+        </div>
+
         {/* Mirrored video */}
         <video
           ref={videoRef}
@@ -105,6 +143,7 @@ export default function App() {
             confidence={confidence}
             handPresent={handPresent}
             bufferFull={landmarkBuffer.isFull()}
+            repState={repState}
             motionEnergyThreshold={motionThreshold}
             confidenceThreshold={confidenceThreshold}
             onMotionThresholdChange={setMotionThreshold}
@@ -163,6 +202,44 @@ const styles = {
     background: '#111',
     color: '#fff',
     fontFamily: 'sans-serif',
+  },
+  repCounter: {
+    position: 'absolute' as const,
+    top: 12,
+    right: 12,
+    zIndex: 10,
+    color: '#fff',
+    fontSize: 28,
+    fontWeight: 700,
+    background: 'rgba(0,0,0,0.5)',
+    padding: '4px 14px',
+    borderRadius: 8,
+  },
+  sessionDone: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    gap: 16,
+  },
+  sessionDoneTitle: {
+    fontSize: 36,
+    fontWeight: 700,
+    color: '#22c55e',
+  },
+  sessionDoneReps: {
+    fontSize: 22,
+    color: '#d1d5db',
+  },
+  resetButton: {
+    marginTop: 8,
+    padding: '12px 32px',
+    fontSize: 18,
+    fontWeight: 700,
+    background: '#3b82f6',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 8,
+    cursor: 'pointer',
   },
   loadingBanner: {
     marginBottom: 16,

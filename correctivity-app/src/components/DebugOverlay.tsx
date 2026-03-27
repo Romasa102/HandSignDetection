@@ -1,11 +1,14 @@
 // Dev-only overlay — not rendered in production builds.
 // Shows real-time classifier and motion energy diagnostics.
 
+import type { RepState } from '@/types'
+
 interface Props {
   motionEnergy: number
   confidence: number
   handPresent: boolean
   bufferFull: boolean
+  repState: RepState
   motionEnergyThreshold: number
   confidenceThreshold: number
   onMotionThresholdChange: (v: number) => void
@@ -17,6 +20,7 @@ export function DebugOverlay({
   confidence,
   handPresent,
   bufferFull,
+  repState,
   motionEnergyThreshold,
   confidenceThreshold,
   onMotionThresholdChange,
@@ -41,6 +45,7 @@ export function DebugOverlay({
       <div>[DEV]</div>
       <div>hand: {handPresent ? 'YES' : 'NO'}</div>
       <div>buffer full: {bufferFull ? 'YES' : 'NO'}</div>
+      <div>state: {repState}</div>
       <div>energy: {motionEnergy.toFixed(4)}</div>
       <div>confidence: {confidence.toFixed(3)}</div>
 
